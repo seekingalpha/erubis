@@ -53,7 +53,7 @@ module Erubis
         engine = self.new(nil, properties)
         engine.src = File.read(cachename)
       else
-        input = File.open(filename, 'rb') {|f| f.read }
+        input = File.read(filename)
         engine = self.new(input, properties)
         tmpname = cachename + rand().to_s[1,8]
         File.open(tmpname, 'wb') {|f| f.write(engine.src) }
