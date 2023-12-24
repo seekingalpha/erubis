@@ -60,7 +60,6 @@ module Erubis
         File.rename(tmpname, cachename)
         File.utime(timestamp, timestamp, cachename)
       end
-      engine.src.untaint   # ok?
       return engine
     end
 
