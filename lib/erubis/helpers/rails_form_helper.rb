@@ -35,7 +35,7 @@ end
   end
 
   def pp_error_on(object_name, method)
-    s = ''
+    s = +''
     s << "<% _stag, _etag = _pp_error_tags(@#{object_name}.errors.on('#{method}')) %>"
     s << "<%= _stag %>"
     s << yield(object_name, method)
@@ -120,7 +120,7 @@ end
 
   def _pp_select(object, method, collection, priority_collection, options={}, html_options={})
     return pp_error_on(object, method) do
-      s = ""
+      s = +""
       ## start tag
       s << "<select id=\"#{object}_#{method}\" name=\"#{object}[#{method}]\""
       for key, val in html_options:

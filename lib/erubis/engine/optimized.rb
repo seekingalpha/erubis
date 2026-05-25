@@ -58,7 +58,7 @@ module Erubis
         switch_to_expr(src)
         src << " << '" << escape_text(text) << "'"
       else
-        src << "_buf = '" << escape_text(text) << "';"
+        src << "_buf = +'" << escape_text(text) << "';"
         @initialized = true
       end
     end
@@ -71,13 +71,13 @@ module Erubis
     end
 
     def add_expr_literal(src, code)
-      unless @initialized; src << "_buf = ''"; @initialized = true; end
+      unless @initialized; src << "_buf = +''"; @initialized = true; end
       switch_to_expr(src)
       src << " << (" << code << ").to_s"
     end
 
     def add_expr_escaped(src, code)
-      unless @initialized; src << "_buf = ''"; @initialized = true; end
+      unless @initialized; src << "_buf = +''"; @initialized = true; end
       switch_to_expr(src)
       src << " << " << escaped_expr(code)
     end

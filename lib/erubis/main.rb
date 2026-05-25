@@ -275,12 +275,12 @@ module Erubis
         list << [lang, collect_supported_properties(klass) - basic_props]
       end
       list.each do |lang, props|
-        s << "  * #{lang}\n"
+        s += "  * #{lang}\n"
         props.each do |name, default_val, desc|
-          s << ("     --%-23s : %s\n" % ["#{name}=#{default_val.inspect}", desc])
+          s += ("     --%-23s : %s\n" % ["#{name}=#{default_val.inspect}", desc])
         end
       end
-      s << "\n"
+      s += "\n"
       return s
     end
 
@@ -291,7 +291,7 @@ module Erubis
       end
       s = "enhancers:\n"
       dict.sort_by {|name, mod| name }.each do |name, mod|
-        s << ("  %-13s : %s\n" % [name, mod.desc])
+        s += ("  %-13s : %s\n" % [name, mod.desc])
       end
       return s
     end
@@ -346,7 +346,7 @@ module Erubis
     def untabify(str, width=8)
       list = str.split(/\t/)
       last = list.pop
-      sb = ''
+      sb = +''
       list.each do |s|
         column = (n = s.rindex(?\n)) ? s.length - n - 1 : s.length
         n = width - (column % width)
@@ -480,7 +480,7 @@ module Erubis
       errmsg = stderr.read()
       stderr.close()
       return nil unless errmsg && !errmsg.empty?
-      errmsg =~ /\A-:(\d+): /
+      errmsg =~ /\A(?:ruby: )?-:(\d+): /
       linenum, message = $1, $'
       return "#{filename}:#{linenum}: #{message}"
     end
@@ -500,7 +500,7 @@ module Erubis
             linenum += 1
             break line if linenum == ex_linenum
           end
-          msg = "#{ex.message}\n"
+          msg = +"#{ex.message}\n"
           msg << srcline
           msg << "\n" unless srcline =~ /\n\z/
           msg << (" " * (ex.column-1)) << "^\n"

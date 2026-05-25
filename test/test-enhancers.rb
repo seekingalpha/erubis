@@ -19,8 +19,8 @@ class EnhancersTest < Test::Unit::TestCase
 
 
   def _test()
-    @src.gsub!(/\^/, ' ')
-    @output.gsub!(/\^/, ' ') if @output.is_a?(String)
+    @src = @src.gsub(/\^/, ' ')
+    @output = @output.gsub(/\^/, ' ') if @output.is_a?(String)
     if @class
       k = Erubis
       @class.split('::').each do |name| k = k.const_get(name) end
@@ -113,7 +113,7 @@ __END__
        <% end %>
       </ul>
   src: &basic1_src |
-      _buf = ''; _buf << '<ul>
+      _buf = +''; _buf << '<ul>
       ';  for item in list 
        _buf << '  <li>'; _buf << ( item ).to_s; _buf << '</li>
       ';  end 
@@ -137,7 +137,7 @@ __END__
        <% end %>
       </pre>
   src: |
-      _buf = ''; _buf << '<pre>
+      _buf = +''; _buf << '<pre>
       ';  for item in list 
        _buf << '  '; _buf << Erubis::XmlHelper.escape_xml( item ); _buf << '
       '; _buf << '  '; _buf << ( item ).to_s; _buf << '
@@ -167,7 +167,7 @@ __END__
         <%==== item["var#{n}"] %>
       <% end %>
   src: |
-      _buf = ''; for item in list 
+      _buf = +''; for item in list 
        _buf << '  '; _buf << Erubis::XmlHelper.escape_xml( item["var#{n}"] ); _buf << '
       '; _buf << '  '; _buf << ( item["var#{n}"] ).to_s; _buf << '
       '; _buf << '  '; $stderr.puts("*** debug: item[\"var\#{n}\"]=#{(item["var#{n}"]).inspect}"); _buf << '
@@ -200,7 +200,7 @@ __END__
        <% end %>
       </ul>
   src: |
-      @_buf = _buf = ''; _buf << '<ul>
+      @_buf = _buf = +''; _buf << '<ul>
       ';  for item in list 
        _buf << '  <li>'; print item ; _buf << '</li>
       ';  end 
@@ -292,7 +292,7 @@ __END__
 #       <% end %>
 #      </ul>
   src: |
-      _buf = ''; _buf << '<ul>
+      _buf = +''; _buf << '<ul>
       ';  for item in list 
        _buf << '  <li>'; _buf << ( item ).to_s; _buf << '</li>
       ';  end 
@@ -311,7 +311,7 @@ __END__
   class: ErboutEruby
   input: *basic1_input
   src: |
-      _erbout = _buf = ''; _buf << '<ul>
+      _erbout = _buf = +''; _buf << '<ul>
       ';  for item in list 
        _buf << '  <li>'; _buf << ( item ).to_s; _buf << '</li>
       ';  end 
@@ -339,7 +339,7 @@ __END__
   class: NoTextEruby
   input: *basic1_input
   src: |
-      _buf = '';
+      _buf = +'';
         for item in list 
              _buf << ( item ).to_s;
         end 
@@ -373,7 +373,7 @@ __END__
        <% end %>
       </ul>
   src: |
-      _buf = ''; _buf << '<ul>
+      _buf = +''; _buf << '<ul>
        '; for item in list ; _buf << '
         <li>
          '; _buf << ( item ).to_s; _buf << '
@@ -409,7 +409,7 @@ __END__
         [= item =] = [== item =]
       <% end %>
   src: |
-      _buf = ''; for item in list 
+      _buf = +''; for item in list 
        _buf << '  '; _buf << ( item ).to_s; _buf << ' % '; _buf << Erubis::XmlHelper.escape_xml( item ); _buf << '
       '; _buf << '  '; _buf << ( item ).to_s; _buf << ' = '; _buf << Erubis::XmlHelper.escape_xml( item ); _buf << '
       '; end 
@@ -433,7 +433,7 @@ __END__
         ${item} = ${=item}
       <% end %>
   src: |
-      _buf = ''; for item in list 
+      _buf = +''; for item in list 
        _buf << '  '; _buf << (item).to_s; _buf << ' % '; _buf << Erubis::XmlHelper.escape_xml(item); _buf << '
       '; _buf << '  '; _buf << (item).to_s; _buf << ' = '; _buf << Erubis::XmlHelper.escape_xml(item); _buf << '
       '; end 
@@ -464,7 +464,7 @@ __END__
        % spaced percent
       </pre>
   src: |
-      _buf = ''; _buf << '<table>
+      _buf = +''; _buf << '<table>
       '; for item in list
        _buf << '  <tr>
           <td>'; _buf << ( item ).to_s; _buf << '</td>
@@ -516,7 +516,7 @@ __END__
         !! doubled characters
       </pre>
   src: |
-      _buf = ''; _buf << '<table>
+      _buf = +''; _buf << '<table>
       ';   for item in list
        _buf << '  <tr>
           <td>'; _buf << ( item ).to_s; _buf << '</td>
@@ -567,7 +567,7 @@ __END__
       
       def ordered_list(list)
       
-      _buf = ''; _buf << '<ol>
+      _buf = +''; _buf << '<ol>
       ';   for item in list 
        _buf << '  <li>'; _buf << Erubis::XmlHelper.escape_xml(item); _buf << '</li>
       ';   end 
@@ -589,7 +589,7 @@ __END__
   testopt:
   input: *basic1_input
   src: |
-      _buf = ''; _buf << '<ul>
+      _buf = +''; _buf << '<ul>
       '; for item in list 
        _buf << '<li>'; _buf << ( item ).to_s; _buf << '</li>
       '; end 
@@ -610,7 +610,7 @@ __END__
   testopt:
   input: *basic1_input
   src: |
-      _buf = ''; _buf << %Q`<ul>\n`
+      _buf = +''; _buf << %Q`<ul>\n`
         for item in list 
        _buf << %Q`  <li>#{ item }</li>\n`
         end 
@@ -631,7 +631,7 @@ __END__
       <p>"double quote"</p>
       <p>backslash\n\t</p>
   src: |
-      _buf = ''; _buf << %Q`<p>\`back-quote\`</p>
+      _buf = +''; _buf << %Q`<p>\`back-quote\`</p>
       <p>#{ `echo back-tick operator` }</p>
       <p>\#{sharp}</p>
       <p>'single quote'</p>

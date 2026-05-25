@@ -53,7 +53,7 @@ __END__
       </table>
       <%=== i+1 %>
   expected: |
-      _buf = ''; _buf << '<table>
+      _buf = +''; _buf << '<table>
        <tbody>
       ';   i = 0
            list.each_with_index do |item, i| 
@@ -83,7 +83,7 @@ __END__
         <% end %>
       </table>
   expected: |
-      @_out_buf = ''; @_out_buf << '<table>
+      @_out_buf = +''; @_out_buf << '<table>
       ';   for item in @items 
        @_out_buf << '  <tr>
           <td>'; @_out_buf << ( i+1 ).to_s; @_out_buf << '</td>

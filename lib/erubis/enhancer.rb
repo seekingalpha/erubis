@@ -208,7 +208,7 @@ module Erubis
     end
 
     def add_preamble(src)
-      src << "#{@bufvar} = '';"
+      src << "#{@bufvar} = +'';"
     end
 
     def add_postamble(src)
@@ -250,11 +250,11 @@ module Erubis
   module ErboutEnhancer
 
     def self.desc   # :nodoc:
-      "set '_erbout = _buf = \"\";' to be compatible with ERB."
+      "set '_erbout = _buf = +\"\";' to be compatible with ERB."
     end
 
     def add_preamble(src)
-      src << "_erbout = #{@bufvar} = '';"
+      src << "_erbout = #{@bufvar} = +'';"
     end
 
     def add_postamble(src)
@@ -340,7 +340,7 @@ module Erubis
     SIMPLE_REGEXP = /<%(=+|\#)?(.*?)-?%>/m
 
     def convert(input)
-      src = ""
+      src = +""
       add_preamble(src)
       #regexp = pattern_regexp(@pattern)
       pos = 0
@@ -457,7 +457,7 @@ module Erubis
         @prefixrexp = Regexp.compile("^([ \\t]*)\\#{@prefixchar}(.*?\\r?\\n)")
       end
       pos = 0
-      text2 = ''
+      text2 = +''
       text.scan(@prefixrexp) do
         space = $1
         line  = $2
@@ -643,7 +643,7 @@ module Erubis
       regexp = pat.nil? || pat == '<% %>' ? Basic::Converter::DEFAULT_REGEXP : pattern_regexp(pat)
       pos = 0
       is_bol = true     # is beginning of line
-      str = ''
+      str = +''
       input.scan(regexp) do |indicator, code, tailch, rspace|
         match = Regexp.last_match()
         len  = match.begin(0) - pos
@@ -664,24 +664,24 @@ module Erubis
           n = code.count("\n") + (rspace ? 1 : 0)
           if @trim && lspace && rspace
             add_text(src, str)
-            str = ''
+            str = +''
             add_stmt(src, "\n" * n)
           else
             str << lspace if lspace
             add_text(src, str)
-            str = ''
+            str = +''
             add_stmt(src, "\n" * n)
             str << rspace if rspace
           end
         else                     # <% %>
           if @trim && lspace && rspace
             add_text(src, str)
-            str = ''
+            str = +''
             add_stmt(src, "#{lspace}#{code}#{rspace}")
           else
             str << lspace if lspace
             add_text(src, str)
-            str = ''
+            str = +''
             add_stmt(src, code)
             str << rspace if rspace
           end

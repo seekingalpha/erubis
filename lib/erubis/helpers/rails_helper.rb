@@ -251,7 +251,7 @@ if ActionPack::VERSION::MAJOR >= 2             ### Rails 2.X
         locals_keys = @@template_args[render_symbol].keys | locals
         @@template_args[render_symbol] = locals_keys.inject({}) { |h, k| h[k] = true; h }
         #
-        locals_code = ""
+        locals_code = +""
         locals_keys.each do |key|
           locals_code << "#{key} = local_assigns[:#{key}]\n"
         end
@@ -293,7 +293,7 @@ else                                           ###  Rails 1.X
         #
         locals_code = ""
         locals_keys.each do |key|
-          locals_code << "#{key} = local_assigns[:#{key}]\n"
+          locals_code += "#{key} = local_assigns[:#{key}]\n"
         end
         #
         "def #{render_symbol}(local_assigns)\n#{locals_code}#{body}\nend"
@@ -325,7 +325,7 @@ else                                           ###  Rails 1.X
         locals_keys = @@template_args[render_symbol].keys | locals
         @@template_args[render_symbol] = locals_keys.inject({}) { |h, k| h[k] = true; h }
         #
-        locals_code = ""
+        locals_code = +""
         locals_keys.each do |key|
           locals_code << "#{key} = local_assigns[:#{key}] if local_assigns.has_key?(:#{key})\n"
         end

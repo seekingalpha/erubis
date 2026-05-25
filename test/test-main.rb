@@ -68,7 +68,7 @@ END
 #_buf
 #END
   SRC = <<'END'
-_buf = ''; _buf << 'list:
+_buf = +''; _buf << 'list:
 '; list = ['<aaa>', 'b&b', '"ccc"']
    for item in list 
  _buf << '  - '; _buf << ( item ).to_s; _buf << '
@@ -107,7 +107,7 @@ END
 END
 
   PI_SRC = <<'END'
-_buf = ''; _buf << '<ul>
+_buf = +''; _buf << '<ul>
 ';   @list = ['<aaa>', 'b&b', '"ccc"']
    for item in @list 
  _buf << '  <li>'; _buf << Erubis::XmlHelper.escape_xml(item); _buf << ' / '; _buf << (item).to_s; _buf << '
@@ -119,7 +119,7 @@ _buf.to_s
 END
 
   PI_ESCAPED_SRC = <<'END'
-_buf = ''; _buf << '<ul>
+_buf = +''; _buf << '<ul>
 ';   @list = ['<aaa>', 'b&b', '"ccc"']
    for item in @list 
  _buf << '  <li>'; _buf << (item).to_s; _buf << ' / '; _buf << Erubis::XmlHelper.escape_xml(item); _buf << '
@@ -154,8 +154,8 @@ END
 
   def _test()
     if @filename.nil?
-      method = (caller[0] =~ /in `(.*)'/) && $1    #'
-      method =~ /block in (.*)/ and method = $1    # for Ruby 1.9
+      method = (caller[0] =~ /in [`'](?:MainTest#)?(.*)'/) && $1
+      method =~ /block in (?:MainTest#)?(.*)/ and method = $1    # for Ruby 1.9
       @filename = "tmp.#{method}"
     end
     File.open(@filename, 'w') {|f| f.write(@input) } if @filename
@@ -342,6 +342,46 @@ END
       errmsgs << <<'END'
 7: syntax error, unexpected end-of-input, expecting `end'
 END
+    elsif ruby33?
+      errmsgs << <<'END'
+3: syntax error, unexpected ']', expecting ')'
+...  <li>'; _buf << ( item[:name]] ).to_s; _buf << '</li>
+...                              ^
+ruby: compile error (SyntaxError)
+END
+      errmsgs << <<'END'
+7: syntax error, unexpected end-of-input, expecting `end' or dummy end
+_buf.to_s
+         ^
+ruby: compile error (SyntaxError)
+END
+    elsif ruby34?
+      errmsgs << <<'END'
+3: syntax errors found (SyntaxError)
+  1 | _buf = +''; _buf << '<ul>
+  2 | '; for item in list 
+> 3 | ... ] ).to_s; _buf << '</li>
+    |     ^ unexpected ']', ignoring it
+    |     ^ unexpected ']', expecting end-of-input
+    |     ^ expected a matching `)`
+    |     ^ unexpected ']', ignoring it
+    |     ^ unexpected ']', expecting end-of-input
+    |       ^ unexpected ')', ignoring it
+    |        ^ unexpected '.', ignoring it
+  4 | '; end 
+  5 |  _buf << '</ul>
+
+END
+      errmsgs << <<'END'
+7: syntax errors found (SyntaxError)
+  5 |  _buf << '</ul>
+  6 | ';
+> 7 | _buf.to_s
+    |          ^ unexpected end-of-input, assuming it is closing the parent top level context
+> 8 | 
+    | ^ expected an `end` to close the `for` loop
+
+END
     elsif rubinius?
       errmsgs << <<'END'
 3: expecting ')'
@@ -385,8 +425,8 @@ END
         File.open(filenames[i], 'w') {|f| f.write(inputs[i]) }
       end
       @input = '<ok/>'
-      @expected = ''
-      @options = '-z'
+      @expected = +''
+      @options = +'-z'
       (0...max).each do |i|
         @expected << "#{filenames[i]}:#{errmsgs[i]}"
         @options << " #{filenames[i]}"
@@ -451,7 +491,7 @@ END
 #_buf
 #END
     @expected = <<'END'
-_buf = ''; _buf << 'list:
+_buf = +''; _buf << 'list:
 '; list = ['<aaa>', 'b&b', '"ccc"']
    for item in list ; _buf << '
 '; _buf << '  - '; _buf << ( item ).to_s; _buf << '
@@ -546,7 +586,8 @@ END
 	- ccc
     END
     File.open(yamlfile, 'w') {|f| f.write(yaml) }
-    assert_raise(ArgumentError) do
+    expected = ruby30? || ruby33? || ruby34? ? Psych::SyntaxError : ArgumentError
+    assert_raise(expected) do
       _test()
     end
     File.open(yamlfile, 'w') {|f| f.write(yaml.gsub(/\t/, ' '*8)) }
@@ -720,7 +761,7 @@ END
 
   def test_bodyonly1  # -b
     @input = INPUT
-    @expected = SRC.sub(/\A_buf = '';/,'').sub(/\n_buf.to_s\n\z/,'')
+    @expected = SRC.sub(/\A_buf = \+'';/,'').sub(/\n_buf.to_s\n\z/,'')
     @options = '-b -x'
     _test()
   end

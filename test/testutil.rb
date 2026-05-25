@@ -53,6 +53,14 @@ def ruby30?  # :nodoc:
   RUBY_VERSION =~ /\A3.0/
 end
 
+def ruby33?  # :nodoc:
+  RUBY_VERSION =~ /\A3.3/
+end
+
+def ruby34?  # :nodoc:
+  RUBY_VERSION =~ /\A3.4/
+end
+
 def rubinius?  # :nodoc:
   defined?(RUBY_ENGINE) && RUBY_ENGINE == "rbx"
 end
@@ -133,7 +141,7 @@ class Test::Unit::TestCase
       return str if str.nil?
       list = str.split(/\t/, -1)   # if 2nd arg is negative then split() doesn't remove tailing empty strings
       last = list.pop
-      sb = ''
+      sb = +''
       list.each do |s|
         column = (n = s.rindex(?\n)) ? s.length - n - 1 : s.length
         n = width - (column % width)
